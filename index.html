@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jean_GPT</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-clifford: #da373d;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center bg-gray-950">
+        <div class="w-150 h-200 relative bg-white rounded-2xl overflow-hidden border border-gray-300 shadow-2xl flex flex-col">
+
+            <!-- Titre -->
+            <div class="h-20 bg-clifford flex items-center justify-center z-10 shrink-0">
+                <h1 class="text-3xl font-bold text-white">Jean_GPT</h1>
+            </div>
+
+            <!-- Zone des messages -->
+            <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50">
+                <!-- Les messages apparaîtront ici -->
+            </div>
+
+            <!-- Formulaire -->
+            <div class="p-4 border-t bg-white shrink-0">
+                <form id="chat-form" class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="user-input"
+                        placeholder="Pose-moi une question..." 
+                        class="flex-1 focus:outline-none border border-gray-300 rounded-full px-5 py-3 text-sm">
+                    <button 
+                        type="submit"
+                        class="bg-clifford text-white px-8 rounded-full font-medium hover:bg-red-700 transition">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="javascript.js"></script>
+</body>
+</html>

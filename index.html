@@ -162,8 +162,8 @@
         }
 
         .typing-indicator span {
-            height: 8px;
-            width: 8px;
+            height: 5px;
+            width: 5px;
             background-color: #000;
             border-radius: 50%;
             display: inline-block;
@@ -231,7 +231,7 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>ChatBot Jean2.0</h1>
+            <h1>Bot_Jean2.0</h1>
             <div class="status" id="statusText">Ho! Prêt à discuter</div>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -289,7 +289,7 @@
         }
 
         async function callGimini(message) {
-            let API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + process.env.GEMINI_API_KEY;
+            let API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=AIzaSyCfnVvnm6tuWrWWhRXxd1id3GVfiPlTXCk";
 
             conversationHistory.push({ 
                 role: "user",
@@ -305,7 +305,7 @@
                     body: JSON.stringify({
                         contents: [
                             {
-                                parts: [{ text: userMessage }]
+                                parts: [{ text: message }]
                             },
                         ],
                     }),
@@ -313,14 +313,19 @@
 
                 const data = await response.json();
 
-                if (!response.ok) {
+               /* if (!response.ok) {
                     const errorData = await response.json();
                     console.error("API Error:", errorData);
                     throw new Error(errorData.error?.message || "Erreur inconnue");
-                }
+                }*/
 
                 if (!data.candidates) {
-                    console.error("Erreur API :", data);
+                    if(data.error.message) {
+                        alert(" SVP! Attends environ 50 secondes ou plus, puis réessaye. ");
+                    } else {
+                        alert("Une erreur inconnue est survenue. Veuillez réessayer.");
+                    }
+                    console.log("Erreur API:", data);//data.error.message
                     return;
                 }
 
@@ -382,7 +387,6 @@
                 hideTyping();
                 addMessage(response, false);
                 statusText.textContent = "Erreur";
-                console.error("API Error: ", error);
                 /*if(response) {
                     addMessage(response, false);
                 } else {
@@ -405,7 +409,7 @@
                 sendMessage();
             }
         });
-
+        console.log(conversationHistory);
         userInput.focus();//focus automatique sur le champ de saisie pour que l'utilisateur puisse commencer à taper immédiatement.
 
 

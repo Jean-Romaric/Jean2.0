@@ -1,6 +1,7 @@
 {
+  "type": "module",
   "dependencies": {
-    "@google/genai": "^1.47.0",
+    "@google/genai": "^1.48.0",
     "dotenv": "^17.3.1",
     "mime": "^4.1.0"
   },

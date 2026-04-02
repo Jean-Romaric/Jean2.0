@@ -1,48 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jean_GPT</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-        @theme {
-            --color-clifford: #da373d;
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f2f2f2;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 600px;
+            height: 85vh;
+            background-color: #FFF;
+            border-radius: 20px;
+            box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header .status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+            /**/
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.5;
+            /*white-space: pre-wrap;  je gardes ce que l’utilisateur a écrit*/
+        }
+
+        .message.bot .message-content {
+            background-color: #fff;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background-color: #fff;
+            color: #333;
+            border-bottom-right-radius: 4px;
+            box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.error .message-content {
+            background-color: #fff;
+            color: #ce2525;
+            border-left: 4px solid;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background-color: #fff;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #ebebeb;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 20px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #sendBtn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 18px;
+            width: fit-content;
+            box-shadow: 1px 1px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #000;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 3px;
+            animation: typing 1.5s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="min-h-screen flex items-center justify-center bg-gray-950">
-        <div class="w-150 h-200 relative bg-white rounded-2xl overflow-hidden border border-gray-300 shadow-2xl flex flex-col">
-
-            <!-- Titre -->
-            <div class="h-20 bg-clifford flex items-center justify-center z-10 shrink-0">
-                <h1 class="text-3xl font-bold text-white">Jean_GPT</h1>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>ChatBot Jean2.0</h1>
+            <div class="status" id="statusText">Ho! Prêt à discuter</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Bonjour! Je suis Jean2.0, ton chat intelligent. Comment puis-je t'aider aujourd'hui?
+                </div>
             </div>
-
-            <!-- Zone des messages -->
-            <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50">
-                <!-- Les messages apparaîtront ici -->
-            </div>
-
-            <!-- Formulaire -->
-            <div class="p-4 border-t bg-white shrink-0">
-                <form id="chat-form" class="flex gap-2">
-                    <input 
-                        type="text" 
-                        id="user-input"
-                        placeholder="Pose-moi une question..." 
-                        class="flex-1 focus:outline-none border border-gray-300 rounded-full px-5 py-3 text-sm">
-                    <button 
-                        type="submit"
-                        class="bg-clifford text-white px-8 rounded-full font-medium hover:bg-red-700 transition">
-                        Send
-                    </button>
-                </form>
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
-    </div>
+        <div class="chat-input-container">
+            <input type="text" name="" id="userInput" placeholder="Tapez votre message ici..." autocomplete="off">
+            <button id="sendBtn">Envoyer</button>
+        </div>
 
-    <script src="javascript.js"></script>
+    </div>
+    <script>
+        const OPENAI_API_KEY = "your-api-key-here";
+        const chatMessages = document.getElementById("chatMessages");
+        const userInput = document.getElementById("userInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const typingIndicator = document.getElementById("typingIndicator");
+        const statusText = document.getElementById("statusText");
+
+
+        let conversationHistory = [];
+        //les fonctions sont utilisées pour faire des actions spécifiques, comme afficher les messages, gérer les entrées utilisateur, et communiquer avec l'API d'OpenAI.
+
+        function addMessage(message, isUser, isError = false) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isUser ? "user" : isError ? "error" : "bot"}`;
+
+            const messageContent = document.createElement("div");
+            messageContent.className = "message-content";
+            messageContent.textContent = message;
+
+            messageDiv.appendChild(messageContent);
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.classList.add("active");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.remove("active");
+        }
+
+        async function callGimini(message) {
+            let API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + process.env.GEMINI_API_KEY;
+
+            conversationHistory.push({ 
+                role: "user",
+                 content: message 
+                });
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                parts: [{ text: userMessage }]
+                            },
+                        ],
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("API Error:", errorData);
+                    throw new Error(errorData.error?.message || "Erreur inconnue");
+                }
+
+                if (!data.candidates) {
+                    console.error("Erreur API :", data);
+                    return;
+                }
+
+                const generatedContent = data.candidates[0].content.parts[0].text;
+
+                console.log("Generated Content:", generatedContent);
+
+                //console.log(data);
+                /*
+                    {
+                  candidates: [ { content: [Object], finishReason: 'STOP', index: 0 } ],
+                  usageMetadata: {
+                    promptTokenCount: 14,
+                    candidatesTokenCount: 541,
+                    totalTokenCount: 993,
+                    promptTokensDetails: [ [Object] ],
+                    thoughtsTokenCount: 438
+                  },
+                  modelVersion: 'gemini-3-flash-preview',
+                  },
+                  modelVersion: 'gemini-3-flash-preview',
+                  modelVersion: 'gemini-3-flash-preview',
+                  responseId: 'EWPOaa7bNe78xN8PvdL4KA'
+                  responseId: 'EWPOaa7bNe78xN8PvdL4KA'
+                }
+                
+                */
+                conversationHistory.push({ 
+                role: "assistant",
+                 content: generatedContent 
+                });
+
+                if(conversationHistory.length > 20) {
+                    conversationHistory = conversationHistory.slice(-20);
+                }
+                return generatedContent;
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if(message === "") return;
+
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+
+            addMessage(message, true);
+            userInput.value = "";
+
+            showTyping();
+            statusText.textContent = "Jean2.0 réfléchit...";
+
+            try {
+                const response = await callGimini(message);
+                hideTyping();
+                addMessage(response, false);
+                statusText.textContent = "Erreur";
+                console.error("API Error: ", error);
+                /*if(response) {
+                    addMessage(response, false);
+                } else {
+                    addMessage("Désolé, une erreur est survenue. Veuillez réessayer.", false, true);
+                }*/
+            }catch(error){
+                hideTyping();
+                statusText.textContent = "Erreur";
+                console.error("API Error: ", error);
+            }
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+
+        //Les actions 
+        sendBtn.addEventListener("click", sendMessage);
+        userInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter" && !userInput.disabled) {
+                sendMessage();
+            }
+        });
+
+        userInput.focus();//focus automatique sur le champ de saisie pour que l'utilisateur puisse commencer à taper immédiatement.
+
+
+
+
+
+
+
+
+
+
+
+    </script>
 </body>
+
 </html>

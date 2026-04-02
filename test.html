@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="style.css">
+    <style type="text/tailwindcss">
+        @theme {
+        --color-clifford: oklch(50% 0.134 242.749);
+        --color-colorBackground: oklch(44.6% 0.043 257.281);
+        --color-inputColor:oklch(93.2% 0.032 255.585);
+        --color-background:oklch(37.2% 0.044 257.287);
+        --color-chatBox: oklch(93.2% 0.032 255.585);
+        --color-chatMessage:oklch(68.5% 0.169 237.323);
+        --color-UserMessage:oklch(44.6% 0.043 257.281);
+      }
+    </style>
+
+</head>
+
+<body>
+    <div class="min-h-screen flex items-center justify-center border-2 border-dashed bg-background" id="1">
+        <div class="w-150 relative border rounded-lg border-clifford" id="2">
+            <div class=" flex items-center justify-center text-3xl 
+            text-white w-full h-[80px] bg-clifford absolute 
+            font-bold" id="3">
+                <h1>Jean_GPT</h1>
+            </div>
+            <div class="h-[720px] overflow-y-auto [scrollbar-width:none]
+             [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+                pt-[80px] bg-chatBox mx-4" id="4">
+                <div id="userChat" class="bg-UserMessage text-white p-4 rounded-lg shadow p-4 ml-[150px] mt-4 mb-[39px] w-[400px] flex justify-end">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                <div id="boxChat"class="bg-chatMessage text-white p-4 rounded-lg shadow  ml-1 mt-4 mb-[39px] w-[400px]">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                 <div id="userChat" class="bg-UserMessage text-white p-4 rounded-lg shadow p-4 ml-[150px] mt-4 mb-[39px] w-[400px] flex justify-end">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                <div id="boxChat"class="bg-chatMessage text-white p-4 rounded-lg shadow  ml-1 mt-4 mb-[39px] w-[400px]">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                
+                 <div id="userChat" class="bg-UserMessage text-white p-4 rounded-lg shadow p-4 ml-[150px] mt-4 mb-[39px] w-[400px] flex justify-end">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                <div id="boxChat"class="bg-chatMessage text-white p-4 rounded-lg shadow  ml-1 mt-4 mb-[39px] w-[400px]">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ullam enim repellendus sapiente, ipsam ducimus nisi nesciunt fugiat nostrum amet nam asperiores beatae obcaecati consectetur earum blanditiis eaque soluta consequatur.
+                </div>
+                
+            
+                
+                
+            </div>
+            <div  class=" h-[80px] bg-clifford border-1 border-transparent rounded-xl ">
+                <form action="" class="flex items-center justify-center w-full gap-10 placeholder-gray-300  mt-4 "  >
+                    <input type="text" class="rounded-xl h-[56px] 
+                    w-[400px] pl-4  ml-[63px] p-2 
+                    text-lg bg-inputColor focus:outline-none" 
+                    placeholder="Tape ton message..." >
+                    <button
+                     type="submit"
+                      class="border-1 cursor-pointer rounded-xl  mr-[20px] p-2 text-lg">
+                      Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

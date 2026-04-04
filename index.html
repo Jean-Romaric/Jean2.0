@@ -194,37 +194,36 @@
 
 
 
-        @media (width = 360px) {
+        @media (width=360px) {
 
-          #userInput{
+            #userInput {
                 width: 100%;
-          }
+            }
 
-         }
-         @media (width = 393px) {
+        }
 
-            #userInput{
+        @media (width=393px) {
+
+            #userInput {
                 width: 100%;
-          }
+            }
 
-         }
-         @media (width = 375px) {
+        }
 
-            #userInput{
+        @media (width=375px) {
+
+            #userInput {
                 width: 100%;
-          }
+            }
 
-         }
-         @media (width = 393px) {
+        }
 
-           #userInput{
+        @media (width=393px) {
+
+            #userInput {
                 width: 100%;
-          }
-         }
-
-
-
-         
+            }
+        }
     </style>
 </head>
 
@@ -232,7 +231,7 @@
     <div class="chat-container">
         <div class="chat-header">
             <h1>Bot_Jean2.0</h1>
-            <div class="status" id="statusText">Ho! Prêt à discuter</div>
+            <div class="status" id="statusText">Hoy! Prêt à discuter</div>
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
@@ -253,7 +252,7 @@
 
     </div>
     <script>
-        const OPENAI_API_KEY = "your-api-key-here";
+        const OPENAI_API_KEY = "Mon ApiKey";
         const chatMessages = document.getElementById("chatMessages");
         const userInput = document.getElementById("userInput");
         const sendBtn = document.getElementById("sendBtn");
@@ -291,10 +290,10 @@
         async function callGimini(message) {
             let API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=AIzaSyCfnVvnm6tuWrWWhRXxd1id3GVfiPlTXCk";
 
-            conversationHistory.push({ 
+            conversationHistory.push({
                 role: "user",
-                 content: message 
-                });
+                content: message
+            });
 
             try {
                 const response = await fetch(API_URL, {
@@ -313,15 +312,15 @@
 
                 const data = await response.json();
 
-               /* if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("API Error:", errorData);
-                    throw new Error(errorData.error?.message || "Erreur inconnue");
-                }*/
+                /* if (!response.ok) {
+                     const errorData = await response.json();
+                     console.error("API Error:", errorData);
+                     throw new Error(errorData.error?.message || "Erreur inconnue");
+                 }*/
 
                 if (!data.candidates) {
-                    if(data.error.message) {
-                        alert(" SVP! Attends environ 50 secondes ou plus, puis réessaye. ");
+                    if (data.error.message) {
+                        alert(" SVP! Attendez environ 1 minute avant de réessayer. ");
                     } else {
                         alert("Une erreur inconnue est survenue. Veuillez réessayer.");
                     }
@@ -353,12 +352,12 @@
                 }
                 
                 */
-                conversationHistory.push({ 
-                role: "assistant",
-                 content: generatedContent 
+                conversationHistory.push({
+                    role: "assistant",//bot
+                    content: generatedContent
                 });
 
-                if(conversationHistory.length > 20) {
+                if (conversationHistory.length > 20) {
                     conversationHistory = conversationHistory.slice(-20);
                 }
                 return generatedContent;
@@ -371,7 +370,7 @@
 
         async function sendMessage() {
             const message = userInput.value.trim();
-            if(message === "") return;
+            if (message === "") return;
 
             userInput.disabled = true;
             sendBtn.disabled = true;
@@ -386,13 +385,14 @@
                 const response = await callGimini(message);
                 hideTyping();
                 addMessage(response, false);
+                //ici voit ici
                 statusText.textContent = "Erreur";
                 /*if(response) {
                     addMessage(response, false);
                 } else {
                     addMessage("Désolé, une erreur est survenue. Veuillez réessayer.", false, true);
                 }*/
-            }catch(error){
+            } catch (error) {
                 hideTyping();
                 statusText.textContent = "Erreur";
                 console.error("API Error: ", error);
@@ -409,18 +409,8 @@
                 sendMessage();
             }
         });
-        console.log(conversationHistory);
+
         userInput.focus();//focus automatique sur le champ de saisie pour que l'utilisateur puisse commencer à taper immédiatement.
-
-
-
-
-
-
-
-
-
-
 
     </script>
 </body>

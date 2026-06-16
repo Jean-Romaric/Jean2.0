@@ -332,11 +332,11 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [{ text: message }]
-                            },
-                        ],
+                       contents: conversationHistory,
+                       systemInstruction: {
+                    parts: [{ text: "Tu t'appelles Jean2.0 Tu es un assistant expert et drôle." }]
+                }
+
                     }),
                 });
 

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jean2.0</title>
-<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 
     <style>
         * {
@@ -23,14 +23,12 @@
             justify-content: center;
         }
 
+        @media (min-width: 768px) {
+            body {
+                height: 100vh;
+            }
+        }
 
-
-
-@media (min-width: 768px) {
-  body {
-    height: 100vh; /* Classique sur desktop */
-  }
-}
         .chat-container {
             width: 90%;
             max-width: 500px;
@@ -44,15 +42,9 @@
         }
 
         .chat-header {
-            
-      /* Gradient de base */
-      background: linear-gradient(270deg, #ff6ec4, #7873f5, #4ADEDE);
-
-      
-      background-size: 800% 800%;
-
-      /* Animation */
-      animation: gradientMove 6s ease infinite;
+            background: linear-gradient(270deg, #ff6ec4, #7873f5, #4ADEDE);
+            background-size: 800% 800%;
+            animation: gradientMove 6s ease infinite;
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -86,7 +78,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -95,7 +86,6 @@
 
         .message.user {
             justify-content: flex-end;
-            /**/
         }
 
         .message-content {
@@ -104,7 +94,7 @@
             border-radius: 18px;
             word-wrap: break-word;
             line-height: 1.5;
-            /*white-space: pre-wrap;  je gardes ce que l’utilisateur a écrit*/
+            white-space: pre-wrap; /* Conserve les sauts de ligne de Gemini */
         }
 
         .message.bot .message-content {
@@ -115,8 +105,8 @@
         }
 
         .message.user .message-content {
-            background-color: #fff;
-            color: #333;
+            background-color: #000;
+            color: #fff;
             border-bottom-right-radius: 4px;
             box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.1);
         }
@@ -124,7 +114,7 @@
         .message.error .message-content {
             background-color: #fff;
             color: #ce2525;
-            border-left: 4px solid;
+            border-left: 4px solid #ce2525;
         }
 
         .chat-input-container {
@@ -173,6 +163,7 @@
             border-radius: 18px;
             width: fit-content;
             box-shadow: 1px 1px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
         }
 
         .typing-indicator.active {
@@ -189,70 +180,18 @@
             animation: typing 1.5s infinite;
         }
 
-        .typing-indicator span:nth-child(2) {
-            animation-delay: .2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: .4s;
-        }
+        .typing-indicator span:nth-child(2) { animation-delay: .2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: .4s; }
 
         @keyframes typing {
-
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-            }
-
-            30% {
-                transform: translateY(-10px);
-            }
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
         }
 
-@keyframes gradientMove {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
-    }
-
-
-
-        @media (width=360px) {
-
-            #userInput {
-                width: 100%;
-            }
-
-        }
-
-        @media (width=393px) {
-
-            #userInput {
-                width: 100%;
-            }
-
-        }
-
-        @media (width=375px) {
-
-            #userInput {
-                width: 100%;
-            }
-
-        }
-
-        @media (width=393px) {
-
-            #userInput {
-                width: 100%;
-            }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
@@ -261,12 +200,12 @@
     <div class="h-dvh md:h-screen chat-container">
         <div class="chat-header">
             <h1>Jean2.0</h1>
-            <div class="status" id="statusText">Hoy! Prêt à discuter</div>
+            <div class="status" id="statusText">Prêt à discuter</div>
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
                 <div class="message-content">
-                    Bonjour! Je suis Jean2.0, ton chat intelligent. Comment puis-je t'aider aujourd'hui?
+                    Bonjour! Je suis Jean2.0, ton assistant IA personnalisé. Comment puis-je t'aider aujourd'hui ?
                 </div>
             </div>
             <div class="typing-indicator" id="typingIndicator">
@@ -276,22 +215,20 @@
             </div>
         </div>
         <div class="chat-input-container">
-            <input type="text" name="" id="userInput" placeholder="Tapez votre message ici..." autocomplete="off">
+            <input type="text" id="userInput" placeholder="Tapez votre message ici..." autocomplete="off">
             <button id="sendBtn">Envoyer</button>
         </div>
-
     </div>
+
     <script>
-        const OPENAI_API_KEY = "Mon ApiKey";
         const chatMessages = document.getElementById("chatMessages");
         const userInput = document.getElementById("userInput");
         const sendBtn = document.getElementById("sendBtn");
         const typingIndicator = document.getElementById("typingIndicator");
         const statusText = document.getElementById("statusText");
 
-
+        // Historique au format officiel attendu par l'API Gemini
         let conversationHistory = [];
-        //les fonctions sont utilisées pour faire des actions spécifiques, comme afficher les messages, gérer les entrées utilisateur, et communiquer avec l'API d'OpenAI.
 
         function addMessage(message, isUser, isError = false) {
             const messageDiv = document.createElement("div");
@@ -303,26 +240,25 @@
 
             messageDiv.appendChild(messageContent);
             chatMessages.insertBefore(messageDiv, typingIndicator);
-
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function showTyping() {
             typingIndicator.classList.add("active");
             chatMessages.scrollTop = chatMessages.scrollHeight;
-
         }
 
         function hideTyping() {
             typingIndicator.classList.remove("active");
         }
 
-        async function callGimini(message) {
-            let API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=AIzaSyA5OYzBL80GFbsrKQvCEYv1H3i0IipuDOM";
+        async function callGemini(message) {
+    
+            const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=AIzaSyA5OYzBL80GFbsrKQvCEYv1H3i0IipuDOM";
 
             conversationHistory.push({
                 role: "user",
-                content: message
+                parts: [{ text: message }]
             });
 
             try {
@@ -332,70 +268,44 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                       contents: conversationHistory,
-                       systemInstruction: {
-                    parts: [{ text: "Tu t'appelles Jean2.0 Tu es un assistant expert et drôle." }]
-                }
-
+                        contents: conversationHistory,
+                        systemInstruction: {
+                            parts: [{ 
+                                text: "Tu t'appelles Jean2.0. Tu es un assistant intelligent, amical et expert en développement d'applications Web (HTML, CSS, JavaScript, React). Utilise des émojis et reste concis. reponds uniquement au question qui on lien avec ton expertise" 
+                            }]
+                        }
                     }),
                 });
 
                 const data = await response.json();
 
-                /* if (!response.ok) {
-                     const errorData = await response.json();
-                     console.error("API Error:", errorData);
-                     throw new Error(errorData.error?.message || "Erreur inconnue");
-                 }*/
+                if (!response.ok || data.error) {
+                    console.error("Erreur API détail:", data.error);
+                    throw new Error(data.error?.message || "Erreur de l'API Gemini");
+                }
 
-                if (!data.candidates) {
-                    if (data.error.message) {
-                        alert(" SVP! Attendez environ 1 minute avant de réessayer. ");
-                    } else {
-                        alert("Une erreur inconnue est survenue. Veuillez réessayer.");
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const generatedContent = data.candidates[0].content.parts[0].text;
+
+                    conversationHistory.push({
+                        role: "model",
+                        parts: [{ text: generatedContent }]
+                    });
+
+                    if (conversationHistory.length > 20) {
+                        conversationHistory = conversationHistory.slice(-20);
                     }
-                    console.log("Erreur API:", data);//data.error.message
-                    return;
+
+                    return generatedContent;
+                } else {
+                    throw new Error("Format de réponse inconnu");
                 }
-
-                const generatedContent = data.candidates[0].content.parts[0].text;
-
-                console.log("Generated Content:", generatedContent);
-
-                //console.log(data);
-                /*
-                    {
-                  candidates: [ { content: [Object], finishReason: 'STOP', index: 0 } ],
-                  usageMetadata: {
-                    promptTokenCount: 14,
-                    candidatesTokenCount: 541,
-                    totalTokenCount: 993,
-                    promptTokensDetails: [ [Object] ],
-                    thoughtsTokenCount: 438
-                  },
-                  modelVersion: 'gemini-3-flash-preview',
-                  },
-                  modelVersion: 'gemini-3-flash-preview',
-                  modelVersion: 'gemini-3-flash-preview',
-                  responseId: 'EWPOaa7bNe78xN8PvdL4KA'
-                  responseId: 'EWPOaa7bNe78xN8PvdL4KA'
-                }
-                
-                */
-                conversationHistory.push({
-                    role: "assistant",//bot
-                    content: generatedContent
-                });
-
-                if (conversationHistory.length > 20) {
-                    conversationHistory = conversationHistory.slice(-20);
-                }
-                return generatedContent;
 
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error dans callGemini:", error);
+                conversationHistory.pop();
+                return null;
             }
-
         }
 
         async function sendMessage() {
@@ -412,27 +322,27 @@
             statusText.textContent = "Jean2.0 réfléchit...";
 
             try {
-                const response = await callGimini(message);
+                const response = await callGemini(message);
                 hideTyping();
-                addMessage(response, false);
-                //ici voit ici
-                statusText.textContent = "Erreur";
-                /*if(response) {
+
+                if (response) {
                     addMessage(response, false);
+                    statusText.textContent = "En ligne";
                 } else {
-                    addMessage("Désolé, une erreur est survenue. Veuillez réessayer.", false, true);
-                }*/
+                    addMessage("Désolé, j'ai rencontré un problème pour me connecter à mon cerveau. Réessaie dans une minute !", false, true);
+                    statusText.textContent = "Erreur de connexion";
+                }
             } catch (error) {
                 hideTyping();
                 statusText.textContent = "Erreur";
-                console.error("API Error: ", error);
+                addMessage("Une erreur critique est survenue.", false, true);
             }
+
             userInput.disabled = false;
             sendBtn.disabled = false;
             userInput.focus();
         }
 
-        //Les actions 
         sendBtn.addEventListener("click", sendMessage);
         userInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter" && !userInput.disabled) {
@@ -440,8 +350,7 @@
             }
         });
 
-        userInput.focus();//focus automatique sur le champ de saisie pour que l'utilisateur puisse commencer à taper immédiatement.
-
+        userInput.focus();
     </script>
 </body>
 

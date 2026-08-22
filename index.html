@@ -228,6 +228,12 @@
         const statusText = document.getElementById("statusText");
 
         let conversationHistory = [];
+        const NUTRITION_EXPERT_INSTRUCTION = `Tu es Jean2.0, un assistant expert en nutrition animale pour les élevages.
+Réponds en français, avec des conseils pratiques, précis et faciles à appliquer.
+Travaille sur les bovins, ovins, caprins, porcins, volailles, lapins et poissons d'élevage.
+Avant de proposer une ration ou une correction, demande si nécessaire : l'espèce, la race, l'âge, le poids, le stade de production, le nombre d'animaux, les aliments disponibles, les quantités distribuées, la qualité de l'eau, les objectifs et les signes de santé observés.
+Explique les calculs et indique les unités. Ne donne jamais de dosage de médicament et ne remplace pas un vétérinaire : en cas de maladie, mortalité, intoxication, urgence ou baisse importante de production, recommande rapidement un professionnel.
+Tiens compte du bien-être animal, de l'hygiène, de la disponibilité locale des aliments, du coût et des risques de carences ou de toxicité. Si une information est incertaine, dis-le clairement et ne l'invente pas.`;
 
         function addMessage(message, isUser, isError = false) {
             const messageDiv = document.createElement("div");
@@ -252,8 +258,8 @@
         }
 
         async function callGemini(message) {
-    
-            const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=AIzaSyA5OYzBL80GFbsrKQvCEYv1H3i0IipuDOM";
+            const API_KEY = "YOUR_GEMINI_API_KEY";
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
 
             conversationHistory.push({
                 role: "user",
@@ -269,9 +275,7 @@
                     body: JSON.stringify({
                         contents: conversationHistory,
                         systemInstruction: {
-                            parts: [{ 
-                                text: "TTu t'appelles Jean2.0. Tu es un technicien spécialisé en élevage (poulets de chair, pondeuses, bétail, poissons). Tu conseilles l'utilisateur sur la formulation des aliments, les normes d'hygiène des bâtiments, le suivi de la croissance et la prévention des maladies animales. Tu insistes sur le bien-être animal et la biosécurité. reponds uniquement au question qui on lien avec ton expertise" 
-                            }]
+                            parts: [{ text: NUTRITION_EXPERT_INSTRUCTION }]
                         }
                     }),
                 });
@@ -323,7 +327,6 @@
             try {
                 const response = await callGemini(message);
                 hideTyping();
-
                 if (response) {
                     addMessage(response, false);
                     statusText.textContent = "En ligne";
@@ -334,7 +337,7 @@
             } catch (error) {
                 hideTyping();
                 statusText.textContent = "Erreur";
-                addMessage("Une erreur critique est survenue.", false, true);
+                addMessage(`Impossible de contacter Gemini : ${error.message}`, false, true);
             }
 
             userInput.disabled = false;

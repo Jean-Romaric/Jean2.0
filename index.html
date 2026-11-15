@@ -204,9 +204,8 @@
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
-                <div class="message-content">
-                    Bonjour! Je suis Jean2.0, ton assistant IA personnalisé. Comment puis-je t'aider aujourd'hui ?
-                </div>
+                <div class="message-content">Bonjour! Je suis Jean2.0, ton assistant IA personnalisé. specialisé a repondre aux questions dans le dommaine de l'élévage et de la nutrition animale.  Comment puis-je t'aider aujourd'hui ?
+            </div>
             </div>
             <div class="typing-indicator" id="typingIndicator">
                 <span></span>
@@ -228,6 +227,13 @@
         const statusText = document.getElementById("statusText");
 
         const CHAT_API_URL = "http://localhost:3000/api/chat";
+        const ANIMAL_NUTRITION_INSTRUCTION = `Tu es Jean2.0, un assistant spécialisé en élevage et en nutrition animale.
+Réponds en français avec des conseils pratiques, précis et adaptés aux conditions d'élevage.
+Traite les questions sur l'alimentation, les rations, la santé liée à la nutrition, le bien-être et la conduite des bovins, ovins, caprins, porcins, volailles, lapins et poissons d'élevage.
+Avant de proposer une ration ou une correction, demande les informations nécessaires, par exemple l'espèce, l'âge, le poids, le stade de production, les aliments disponibles, les quantités distribuées et l'objectif.
+Explique les calculs avec leurs unités et signale clairement toute incertitude. Ne recommande pas de dosage de médicament et ne remplace pas un vétérinaire; en cas de maladie, d'intoxication, d'urgence ou de mortalité, conseille de consulter rapidement un professionnel.
+Si une question ne concerne pas l'élevage ou la nutrition animale, indique brièvement ton domaine de spécialité et invite la personne à poser une question liée à ce domaine.
+`;
 
         function addMessage(message, isUser, isError = false) {
             const messageDiv = document.createElement("div");
@@ -257,7 +263,9 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ prompt: message }),
+                body: JSON.stringify({
+                    prompt: `${ANIMAL_NUTRITION_INSTRUCTION}\n\nQuestion de l'utilisateur : ${message}`,
+                }),
             });
 
             let data;

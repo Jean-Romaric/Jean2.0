@@ -227,13 +227,7 @@
         const typingIndicator = document.getElementById("typingIndicator");
         const statusText = document.getElementById("statusText");
 
-        let conversationHistory = [];
-        const NUTRITION_EXPERT_INSTRUCTION = `Tu es Jean2.0, un assistant expert en nutrition animale pour les élevages.
-Réponds en français, avec des conseils pratiques, précis et faciles à appliquer.
-Travaille sur les bovins, ovins, caprins, porcins, volailles, lapins et poissons d'élevage.
-Avant de proposer une ration ou une correction, demande si nécessaire : l'espèce, la race, l'âge, le poids, le stade de production, le nombre d'animaux, les aliments disponibles, les quantités distribuées, la qualité de l'eau, les objectifs et les signes de santé observés.
-Explique les calculs et indique les unités. Ne donne jamais de dosage de médicament et ne remplace pas un vétérinaire : en cas de maladie, mortalité, intoxication, urgence ou baisse importante de production, recommande rapidement un professionnel.
-Tiens compte du bien-être animal, de l'hygiène, de la disponibilité locale des aliments, du coût et des risques de carences ou de toxicité. Si une information est incertaine, dis-le clairement et ne l'invente pas.`;
+        const CHAT_API_URL = "http://localhost:3000/api/chat";
 
         function addMessage(message, isUser, isError = false) {
             const messageDiv = document.createElement("div");
@@ -257,58 +251,36 @@ Tiens compte du bien-être animal, de l'hygiène, de la disponibilité locale de
             typingIndicator.classList.remove("active");
         }
 
-        async function callGemini(message) {
-            const API_KEY = "YOUR_GEMINI_API_KEY";
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
-
-            conversationHistory.push({
-                role: "user",
-                parts: [{ text: message }]
+        async function callChatApi(message) {
+            const response = await fetch(CHAT_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prompt: message }),
             });
 
+            let data;
             try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        contents: conversationHistory,
-                        systemInstruction: {
-                            parts: [{ text: NUTRITION_EXPERT_INSTRUCTION }]
-                        }
-                    }),
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || data.error) {
-                    console.error("Erreur API détail:", data.error);
-                    throw new Error(data.error?.message || "Erreur de l'API Gemini");
+                data = await response.json();
+            } catch {
+                if (response.ok) {
+                    throw new Error("La réponse de l'API n'est pas un JSON valide.");
                 }
-
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    const generatedContent = data.candidates[0].content.parts[0].text;
-
-                    conversationHistory.push({
-                        role: "model",
-                        parts: [{ text: generatedContent }]
-                    });
-
-                    if (conversationHistory.length > 20) {
-                        conversationHistory = conversationHistory.slice(-20);
-                    }
-
-                    return generatedContent;
-                } else {
-                    throw new Error("Format de réponse inconnu");
-                }
-
-            } catch (error) {
-                console.error("Error dans callGemini:", error);
-                conversationHistory.pop();
-                return null;
             }
+
+            if (!response.ok) {
+                const apiError = typeof data?.error === "string"
+                    ? data.error
+                    : data?.error?.message;
+                throw new Error(apiError || `L'API a répondu avec le statut ${response.status}.`);
+            }
+
+            if (typeof data?.reply !== "string" || !data.reply.trim()) {
+                throw new Error("La réponse de l'API ne contient pas de champ « reply » valide.");
+            }
+
+            return data.reply;
         }
 
         async function sendMessage() {
@@ -325,24 +297,19 @@ Tiens compte du bien-être animal, de l'hygiène, de la disponibilité locale de
             statusText.textContent = "Jean2.0 réfléchit...";
 
             try {
-                const response = await callGemini(message);
+                const response = await callChatApi(message);
                 hideTyping();
-                if (response) {
-                    addMessage(response, false);
-                    statusText.textContent = "En ligne";
-                } else {
-                    addMessage("Désolé, j'ai rencontré un problème pour me connecter à mon cerveau. Réessaie dans une minute !", false, true);
-                    statusText.textContent = "Erreur de connexion";
-                }
+                addMessage(response, false);
+                statusText.textContent = "En ligne";
             } catch (error) {
                 hideTyping();
-                statusText.textContent = "Erreur";
-                addMessage(`Impossible de contacter Gemini : ${error.message}`, false, true);
+                statusText.textContent = "Erreur de connexion";
+                addMessage(`Erreur de l'API : ${error.message}`, false, true);
+            } finally {
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.focus();
             }
-
-            userInput.disabled = false;
-            sendBtn.disabled = false;
-            userInput.focus();
         }
 
         sendBtn.addEventListener("click", sendMessage);
